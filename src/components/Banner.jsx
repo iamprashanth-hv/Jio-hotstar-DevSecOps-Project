@@ -21,7 +21,7 @@ function Banner() {
 
     <div className='bbc'>
         <div className='st'>
-          <img src="https://img.hotstar.com/image/upload/v1737554969/web-assets/prod/images/rebrand/logo.png" alt="" />
+          <img src="https://img10.hotstar.com/image/upload/f_auto,q_90,w_3840/sources/r1/cms/prod/2414/1743613572414-i" alt="" />
           </div>
        
         

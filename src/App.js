@@ -33,8 +33,8 @@ function App() {
     </div>
     <div className='lg'>
     <img src="https://img10.hotstar.com/image/upload/f_auto,h_148/sources/r1/cms/prod/1805/1743615151805-t" alt="" />
-            <h3>2025 . LIVE . 8 languages . <span>U/A 16+</span> </h3>
-            <p>Watch live stream of the Indian Premier League 2025/02 match between RCB and GT </p>
+            <h3>TATA IPL 2025 • 13m • Cricket </h3>
+            <p>Gujarat Titans silenced the Chinnaswamy stadium as they ticked all the boxes against Royal Challengers Bengaluru in TATA IPL 2025 </p>
             <h3>Action | Drama | Thriller | Drugs</h3>
             <button className='btn'>Subscribe to Watch</button>
             <button className='bb btn'>+</button>
