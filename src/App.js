@@ -32,7 +32,7 @@ function App() {
      <Banner/>
     </div>
     <div className='lg'>
-    <img src="https://img10.hotstar.com/image/upload/f_auto,h_148/sources/r1/cms/prod/2744/1602744-t-f24fc98823fa" alt="" />
+    <img src="https://img10.hotstar.com/image/upload/f_auto,q_90,w_640/sources/r1/cms/prod/3013/1743609613013-h" alt="" />
             <h3>2023 . 2h 54m . 4 languages . <span>U/A 16+</span> </h3>
             <p>In a crime-infested town, Kannan bhai and his gang are the reigning powers. To combat this reign and seek revenge, Inspector </p>
             <h3>Action | Drama | Thriller | Drugs</h3>
