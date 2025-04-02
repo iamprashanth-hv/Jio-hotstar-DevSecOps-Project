@@ -2,7 +2,7 @@ import React from 'react'
 import './NavBar.css'
 function NavBar() {
   return (
-    <div className='nav'><img src="https://www.keralatv.in/media/2023/05/DisneyHotstar.png" alt="" />
+    <div className='nav'><img src="https://imgs.search.brave.com/A2o8ieYfTPuGUeb3uTimhVhjfyOQtSO0mkeSpP7LGQw/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9uZXdz/MjRvbmxpbmUuY29t/L3dwLWNvbnRlbnQv/dXBsb2Fkcy8yMDI1/LzAzL0ppby1Ib3Rz/dGFyLmpwZw" alt="" />
       
         <div className='icons'>
             <i class="fa-solid fa-user"></i>

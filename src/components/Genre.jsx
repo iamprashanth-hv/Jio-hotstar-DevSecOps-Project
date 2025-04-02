@@ -5,25 +5,25 @@ function Genre() {
     <div>
         <div className="rowjj">
             <div>
-                <img src="https://img10.hotstar.com/image/upload/f_auto,q_90,w_1920/sources/r1/cms/prod/5262/1535262-a-fbabfaf1176e" alt="" />
+                <img src="https://img10.hotstar.com/image/upload/f_auto,q_90,w_640/sources/r1/cms/prod/7015/1743070057015-i" alt="" />
             </div>
             <div>
-                <img src="https://img10.hotstar.com/image/upload/f_auto,q_90,w_1920/sources/r1/cms/prod/5285/1535285-a-88035ca1ae69" alt="" />
+                <img src="https://img10.hotstar.com/image/upload/f_auto,q_90,w_640/sources/r1/cms/prod/5314/1742813485314-i" alt="" />
             </div>
             <div>
-                <img src="https://img10.hotstar.com/image/upload/f_auto,q_90,w_1920/sources/r1/cms/prod/5284/1535284-a-656c6b45a905" alt="" />
+                <img src="https://img10.hotstar.com/image/upload/f_auto,q_90,w_3840/sources/r1/cms/prod/5128/1741762985128-i" alt="" />
             </div>
             <div>
-                <img src="https://img10.hotstar.com/image/upload/f_auto,q_90,w_1920/sources/r1/cms/prod/5264/1535264-a-9e7871687c76" alt="" />
+                <img src="https://img10.hotstar.com/image/upload/f_auto,q_90,w_640/sources/r1/cms/prod/9929/1741139529929-v" alt="" />
             </div>
             <div>
-                <img src="https://img10.hotstar.com/image/upload/f_auto,q_90,w_1920/sources/r1/cms/prod/5292/1535292-a-5739f9c84b63" alt="" />
+                <img src="https://img10.hotstar.com/image/upload/f_auto/sources/r1/cms/prod/5132/1741675855132-t" alt="" />
             </div>
             <div>
-                <img src="https://img10.hotstar.com/image/upload/f_auto,q_90,w_1920/sources/r1/cms/prod/5288/1535288-a-690bac400aa1" alt="" />
+                <img src="https://img10.hotstar.com/image/upload/f_auto,q_90,w_640/sources/r1/cms/prod/5160/1741341265160-i" alt="" />
             </div>
             <div>
-                <img src="https://img10.hotstar.com/image/upload/f_auto,q_90,w_1920/sources/r1/cms/prod/5281/1535281-a-b56dc39e5bb7" alt="" />
+                <img src="https://img10.hotstar.com/image/upload/f_auto,q_90,w_3840/sources/r1/cms/prod/1220/1742364441220-i" alt="" />
             </div>
             <div>
                 <img src="https://img10.hotstar.com/image/upload/f_auto,q_90,w_1920/sources/r1/cms/prod/5302/1535302-a-e90748391e0d" alt="" />
