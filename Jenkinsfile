@@ -6,11 +6,12 @@ pipeline {
         IMAGE_NAME = "manojkrishnappa/jiohotstar"
         AWS_REGION = "us-east-1"
         CLUSTER_NAME = "microdegree-cluster"
-        SCANNER_HOME = tool 'sonar-scanner'
+        SONAR_URL = 'http://3.89.231.20:9000/'
     }
 
     tools {
         nodejs 'node' // Node.js tool installation
+        jdk 'java-17'
     }
 
     stages {
@@ -20,11 +21,10 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+        stage('Static Code Analysis (SonarQube)') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=MicroDegree \
-                    -Dsonar.projectKey=MicroDegree '''
+                withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
+                    sh "mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}"
                 }
             }
         }
@@ -43,7 +43,7 @@ pipeline {
 
         stage('OWASP Dependency Check') {
             steps {
-                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit --nvdApiKey YOUR_NVD_API_KEY', odcInstallation: 'DC'
+                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit --nvdApiKey 9327cace-c214-4a4d-9210-5fe85d2d620e', odcInstallation: 'DC'
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
@@ -111,7 +111,7 @@ pipeline {
 
         stage('Deploy To Kubernetes') {
             steps {
-                withKubeConfig(caCertificate: '', clusterName: 'microdegree-cluster', contextName: '', credentialsId: 'kube', namespace: 'microdegree', restrictKubeConfigAccess: false, serverUrl: 'https://E00BC60076C20B56479850D48D8E35F5.gr7.us-east-1.eks.amazonaws.com') {
+                withKubeConfig(caCertificate: '', clusterName: 'microdegree-cluster', contextName: '', credentialsId: 'kube', namespace: 'microdegree', restrictKubeConfigAccess: false, serverUrl: 'https://D9215C9BB120E1BB43A99CBCF6C45291.gr7.us-east-1.eks.amazonaws.com') {
                     sh "kubectl get pods -n microdegree"
                     sh "kubectl apply -f deployment.yml -n microdegree"
                 }
@@ -120,7 +120,7 @@ pipeline {
 
         stage('Verify the Deployment') {
             steps {
-                withKubeConfig(caCertificate: '', clusterName: 'microdegree-cluster', contextName: '', credentialsId: 'kube', namespace: 'microdegree', restrictKubeConfigAccess: false, serverUrl: 'https://E00BC60076C20B56479850D48D8E35F5.gr7.us-east-1.eks.amazonaws.com') {
+                withKubeConfig(caCertificate: '', clusterName: 'microdegree-cluster', contextName: '', credentialsId: 'kube', namespace: 'microdegree', restrictKubeConfigAccess: false, serverUrl: 'https://D9215C9BB120E1BB43A99CBCF6C45291.gr7.us-east-1.eks.amazonaws.com') {
                     sh "kubectl get pods -n microdegree"
                     sh "kubectl get svc -n microdegree"
                 }
