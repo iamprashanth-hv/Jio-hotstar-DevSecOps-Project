@@ -12,6 +12,7 @@ pipeline {
     tools {
         nodejs 'node' // Node.js tool installation
         jdk 'java-17'
+        maven 'maven'
     }
 
     stages {
