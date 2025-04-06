@@ -1,17 +1,5 @@
-variable "instance_name" {
-    default = "Monitoring_server"  # Names of the instance
+variable "ssh_key_name" {
+  description = "The name of the SSH key pair to use for instances"
+  type        = string
+  default     = "project"
 }
-
-variable "key_name" {
-  default = "terra"                  # Names of key in aws
-}
-
-
-variable "access_key" {
-  default = "insert"                # aws access key
-}
-
-variable "secret_key" {
-  default = "insert"         # aws secret key
-}
-

@@ -1,79 +1,57 @@
 pipeline {
-    agent any
-
+    parameters {
+        choice(name: 'terraformAction', choices: ['apply', 'destroy'], description: 'Choose the Terraform action to perform')
+    } 
     environment {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
     }
 
-    parameters {
-        string(name: 'action', defaultValue: 'apply', description: 'Terraform action: apply or destroy')
-    }
-
+    agent any
     stages {
-        stage('Checkout from Git') {                        
+        stage('checkout') {
             steps {
-                git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/Aseemakram19/hotstar-kubernetes.git'
-            }
-        }
-
-        stage('Terraform version') {
-            steps {
-                sh 'terraform --version'
-            }
-        }
-
-        stage('Terraform init') {
-            steps {
-                dir('Terraform') {
-                    sh '''
-                    terraform init \
-                    -backend-config="access_key=$AWS_ACCESS_KEY_ID" \
-                    -backend-config="secret_key=$AWS_SECRET_ACCESS_KEY"
-                    '''
+                script {
+                    dir("terraform") {
+                        git branch: 'main', url: 'https://github.com/ManojKRISHNAPPA/Jio-hotstar-DevSecOps-Project.git'
+                    }
                 }
             }
         }
 
-        stage('Terraform validate') {
+        stage('Plan') {
             steps {
-                dir('Terraform') {
-                    sh 'terraform validate'
+                sh 'pwd;cd Terraform/ ; terraform init'
+                sh "pwd;cd Terraform/ ; terraform plan -out tfplan"
+                sh 'pwd;cd Terraform/ ; terraform show -no-color tfplan > tfplan.txt'
+            }
+        }
+
+        stage('Approval') {
+            steps {
+                script {
+                    def plan = readFile 'Terraform/tfplan.txt'
+                    input message: "Do you want to proceed with the Terraform action?",
+                    parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
                 }
             }
         }
 
-        stage('Terraform plan') {
-            steps {
-                dir('Terraform') {
-                    sh '''
-                    terraform plan \
-                    -var="access_key=$AWS_ACCESS_KEY_ID" \
-                    -var="secret_key=$AWS_SECRET_ACCESS_KEY"
-                    '''
+        stage('Apply or Destroy') {
+            when {
+                expression {
+                    return params.terraformAction == 'apply' || params.terraformAction == 'destroy'
                 }
             }
-        }
-
-        stage('Terraform apply/destroy') {
             steps {
-                dir('Terraform') {
-                    sh '''
-                    terraform ${action} --auto-approve \
-                    -var="access_key=$AWS_ACCESS_KEY_ID" \
-                    -var="secret_key=$AWS_SECRET_ACCESS_KEY"
-                    '''
+                script {
+                    if (params.terraformAction == 'apply') {
+                        sh "pwd;cd Terraform/ ; terraform apply -input=false tfplan"
+                    } else if (params.terraformAction == 'destroy') {
+                        sh "pwd;cd Terraform/ ; terraform destroy -auto-approve"
+                    }
                 }
             }
-        }
-    }
-
-    post {
-        success {
-            echo '✅ Terraform execution completed successfully!'
-        }
-        failure {
-            echo '❌ Terraform execution failed! Check the logs.'
         }
     }
 }
