@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_TAG = "20250327"
+        DOCKER_TAG = "20250406"
         IMAGE_NAME = "manojkrishnappa/jiohotstar"
         AWS_REGION = "us-east-1"
         CLUSTER_NAME = "microdegree-cluster"
