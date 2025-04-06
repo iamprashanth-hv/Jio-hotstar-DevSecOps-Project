@@ -72,17 +72,6 @@ pipeline {
             }
         }
 
-        stage('Kubernetes Manifest Scan') {
-            steps {
-                script {
-                    // Install kubescape (if it's not available already)
-                    sh 'curl -s https://github.com/kubescape/kubescape/releases/download/v1.0.0/kubescape-linux-amd64 -o /usr/local/bin/kubescape && chmod +x /usr/local/bin/kubescape'
-                    // Scan the Kubernetes manifest files for security issues
-                    sh 'kubescape scan --exclude-namespaces kube-system --use-k8s-resources --scan-path ./deployment.yml,./service.yml'
-                }
-            }
-        }
-
         stage('Login to Docker Hub') {
             steps {
                 script {
@@ -105,6 +94,17 @@ pipeline {
             steps {
                 script {
                     sh "aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}"
+                }
+            }
+        }
+
+        stage('Kubernetes Manifest Scan') {
+            steps {
+                script {
+                    // Install kubescape (if it's not available already)
+//                     sh 'curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash'
+                    // Scan the Kubernetes manifest files for security issues
+                    sh 'kubescape scan deployment.yml'
                 }
             }
         }
