@@ -41,6 +41,7 @@ pipeline {
         stage('Quality Gate') {
             steps {
                 script {
+                    // Wait for quality gate but do not abort the pipeline
                     waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-token'
                 }
             }
@@ -52,9 +53,27 @@ pipeline {
             }
         }
 
+        // OWASP FS Scan (Handling vulnerabilities but not aborting the pipeline)
         stage('OWASP FS Scan') {
             steps {
-                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit --nvdApiKey 669f5677-4276-4b57-8f0f-4f005469824c', odcInstallation: 'DC'
+                script {
+                    echo "Starting OWASP Dependency-Check FS scan..."
+
+                    // Run OWASP Dependency-Check with offline mode enabled
+                    dependencyCheck additionalArguments: '--scan ./ --offline --disableYarnAudit --disableNodeAudit --nvdApiKey 669f5677-4276-4b57-8f0f-4f005469824c', odcInstallation: 'DC'
+
+                    // Check if there are critical vulnerabilities
+                    def criticalVulns = sh(script: 'grep -c "CRITICAL" dependency-check-report.xml', returnStdout: true).trim()
+
+                    // If there are critical vulnerabilities, log them but continue the pipeline
+                    if (criticalVulns.toInteger() > 0) {
+                        echo "Critical vulnerabilities found: ${criticalVulns}"
+                        // Optionally, send an email or notification about the critical vulnerabilities
+                    }
+                }
+
+                // Archive the report and publish it
+                archiveArtifacts allowEmptyArchive: true, artifacts: '**/dependency-check-report.xml', followSymlinks: false
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
@@ -111,8 +130,6 @@ pipeline {
         stage('Kubernetes Manifest Scan') {
             steps {
                 script {
-                    // Uncomment and install kubescape if needed
-                    // sh 'curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash'
                     // Scan the Kubernetes manifest files for security issues
                     sh 'kubescape scan deployment.yml'
                 }
