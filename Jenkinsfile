@@ -1,51 +1,67 @@
 pipeline {
     agent any
 
+    tools {
+        jdk 'java-17'
+        nodejs 'node'
+    }
+
     environment {
-        DOCKER_TAG = "20250406"
+        SCANNER_HOME = tool 'sonar-scanner'
+        DOCKER_TAG = "20250406"  // You can dynamically assign a commit hash here
         IMAGE_NAME = "manojkrishnappa/jiohotstar"
         AWS_REGION = "us-east-1"
         CLUSTER_NAME = "microdegree-cluster"
-        SONAR_URL = 'http://3.89.231.20:9000/'
-    }
-
-    tools {
-        nodejs 'node' // Node.js tool installation
-        jdk 'java-17'
-        maven 'maven'
     }
 
     stages {
-        stage('Git Checkout') {
+        stage('Clean Workspace') {
             steps {
-                git branch: 'main', url: 'https://github.com/ManojKRISHNAPPA/Jio-hotstar-DevSecOps-Project.git'
+                cleanWs()
             }
         }
 
-        stage('Static Code Analysis (SonarQube)') {
+        stage('Checkout from Git') {
             steps {
-                withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
-                    sh "mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}"
+                git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/ManojKRISHNAPPA/Jio-hotstar-DevSecOps-Project.git'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                    $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Hotstar \
+                    -Dsonar.projectKey=Hotstar
+                    '''
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-token'
                 }
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install' // Install Node.js dependencies
+                sh "npm install"
             }
         }
 
-        stage('Build') {
+        stage('OWASP FS Scan') {
             steps {
-                sh 'npm run build' // Assuming there's a build script in your package.json
-            }
-        }
-
-        stage('OWASP Dependency Check') {
-            steps {
-                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit --nvdApiKey 9327cace-c214-4a4d-9210-5fe85d2d620e', odcInstallation: 'DC'
+                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit --nvdApiKey 669f5677-4276-4b57-8f0f-4f005469824c', odcInstallation: 'DC'
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+
+        stage('Trivy FS Scan') {
+            steps {
+                sh "trivy fs . > trivyfs.txt"
             }
         }
 
@@ -57,19 +73,9 @@ pipeline {
             }
         }
 
-        stage('Trivy Docker Image Scan') {
+        stage('Trivy Image Scan') {
             steps {
-                script {
-                    sh "trivy image --format table -o trivy-image-report.html ${IMAGE_NAME}:${DOCKER_TAG}"
-                }
-            }
-        }
-
-        stage('Trivy File System Scan') {
-            steps {
-                script {
-                    sh "trivy fs . > trivy-fs-report.txt"
-                }
+                sh "trivy image ${IMAGE_NAME}:${DOCKER_TAG} > trivy-image-report.html"
             }
         }
 
@@ -77,6 +83,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        // Login to Docker Hub
                         sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
                     }
                 }
@@ -86,6 +93,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
+                    // Push the image to Docker Hub with both the tag and latest
                     sh "docker push ${IMAGE_NAME}:${DOCKER_TAG}"
                 }
             }
@@ -94,6 +102,7 @@ pipeline {
         stage('Updating the Cluster') {
             steps {
                 script {
+                    // Update the kubeconfig for AWS EKS
                     sh "aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}"
                 }
             }
@@ -102,8 +111,8 @@ pipeline {
         stage('Kubernetes Manifest Scan') {
             steps {
                 script {
-                    // Install kubescape (if it's not available already)
-//                     sh 'curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash'
+                    // Uncomment and install kubescape if needed
+                    // sh 'curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash'
                     // Scan the Kubernetes manifest files for security issues
                     sh 'kubescape scan deployment.yml'
                 }
@@ -158,7 +167,7 @@ pipeline {
                     from: 'manojdevopstest@gmail.com',
                     replyTo: 'manojdevopstest@gmail.com',
                     mimeType: 'text/html',
-                    attachmentsPattern: 'trivy-image-report.html,trivy-fs-report.txt,dependency-check-report.xml'
+                    attachmentsPattern: 'trivy-image-report.html,trivyfs.txt,dependency-check-report.xml'
                 )
             }
         }
