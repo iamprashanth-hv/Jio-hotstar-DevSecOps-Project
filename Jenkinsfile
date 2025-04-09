@@ -56,7 +56,7 @@ pipeline {
         // OWASP FS Scan (Handling vulnerabilities but not aborting the pipeline)
         stage('OWASP FS Scan') {
             steps {
-                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit --nvdApiKey 0ad9f72c-7dcd-4a1d-af36-83d8cc7f3526', odcInstallation: 'DC'
+                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit --nvdApiKey 0ad9f72c-7dcd-4a1d-af36-83d8cc7f3526  --nvdDataFile ./nvd_data', odcInstallation: 'DC'
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
 
 

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: hotstar
-        image: manojkrishnappa/jiohotstar:20250406
+        image: manojkrishnappa/jiohotstar:20250409
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
