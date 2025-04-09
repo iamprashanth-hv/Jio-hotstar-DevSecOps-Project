@@ -13,7 +13,7 @@ pipeline {
             steps {
                 script {
                     dir("terraform") {
-                        git branch: 'infra', url: 'https://github.com/ManojKRISHNAPPA/complete-cicd-project-microdegree.git'
+                        git branch: 'main', credentialsId: 'github-token' url: 'https://github.com/ManojKRISHNAPPA/Jio-hotstar-DevSecOps-Project.git'
                     }
                 }
             }
