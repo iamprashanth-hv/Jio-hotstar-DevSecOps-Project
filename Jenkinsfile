@@ -171,7 +171,7 @@ pipeline {
                     from: 'manojdevopstest@gmail.com',
                     replyTo: 'manojdevopstest@gmail.com',
                     mimeType: 'text/html',
-                    attachmentsPattern: 'trivy-image-report.html,trivyfs.txt,dependency-check-report.xml'
+                    attachmentsPattern: 'trivy-image-report.html,trivyfs.txt,dependency-check-report.xml,/var/lib/jenkins/workspace/DevSecops-complete-pipeline/dependency-check-report.xml'
                 )
             }
         }
