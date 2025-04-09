@@ -8,7 +8,7 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
-        DOCKER_TAG = "20250406"  // You can dynamically assign a commit hash here
+        DOCKER_TAG = "20250409"  // You can dynamically assign a commit hash here
         IMAGE_NAME = "manojkrishnappa/jiohotstar"
         AWS_REGION = "us-east-1"
         CLUSTER_NAME = "microdegree-cluster"
@@ -60,7 +60,7 @@ pipeline {
                     echo "Starting OWASP Dependency-Check FS scan..."
 
                     // Run OWASP Dependency-Check with offline mode enabled
-                    dependencyCheck additionalArguments: '--scan ./ --offline --disableYarnAudit --disableNodeAudit --nvdApiKey 669f5677-4276-4b57-8f0f-4f005469824c', odcInstallation: 'DC'
+                    dependencyCheck additionalArguments: '--scan ./ --offline --disableYarnAudit --disableNodeAudit --nvdApiKey 0ad9f72c-7dcd-4a1d-af36-83d8cc7f3526 ', odcInstallation: 'DC'
 
                     // Check if there are critical vulnerabilities
                     def criticalVulns = sh(script: 'grep -c "CRITICAL" dependency-check-report.xml', returnStdout: true).trim()
@@ -138,7 +138,7 @@ pipeline {
 
         stage('Deploy To Kubernetes') {
             steps {
-                withKubeConfig(caCertificate: '', clusterName: 'microdegree-cluster', contextName: '', credentialsId: 'kube', namespace: 'microdegree', restrictKubeConfigAccess: false, serverUrl: 'https://D9215C9BB120E1BB43A99CBCF6C45291.gr7.us-east-1.eks.amazonaws.com') {
+                withKubeConfig(caCertificate: '', clusterName: 'microdegree-cluster', contextName: '', credentialsId: 'kube', namespace: 'microdegree', restrictKubeConfigAccess: false, serverUrl: 'https://BA1030EE916B1A57868E10E5E422B039.gr7.us-east-1.eks.amazonaws.com') {
                     sh "kubectl get pods -n microdegree"
                     sh "kubectl apply -f deployment.yml -n microdegree"
                 }
@@ -147,7 +147,7 @@ pipeline {
 
         stage('Verify the Deployment') {
             steps {
-                withKubeConfig(caCertificate: '', clusterName: 'microdegree-cluster', contextName: '', credentialsId: 'kube', namespace: 'microdegree', restrictKubeConfigAccess: false, serverUrl: 'https://D9215C9BB120E1BB43A99CBCF6C45291.gr7.us-east-1.eks.amazonaws.com') {
+                withKubeConfig(caCertificate: '', clusterName: 'microdegree-cluster', contextName: '', credentialsId: 'kube', namespace: 'microdegree', restrictKubeConfigAccess: false, serverUrl: 'https://BA1030EE916B1A57868E10E5E422B039.gr7.us-east-1.eks.amazonaws.com') {
                     sh "kubectl get pods -n microdegree"
                     sh "kubectl get svc -n microdegree"
                 }
