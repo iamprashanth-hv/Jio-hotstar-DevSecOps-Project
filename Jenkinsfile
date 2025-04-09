@@ -56,13 +56,12 @@ pipeline {
         // OWASP FS Scan (Handling vulnerabilities but not aborting the pipeline)
         stage('OWASP FS Scan') {
             steps {
-                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit --nvdApiKey 0ad9f72c-7dcd-4a1d-af36-83d8cc7f3526  --nvdDataFile ./nvd_data', odcInstallation: 'DC'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit --nvdApiKey 0ad9f72c-7dcd-4a1d-af36-83d8cc7f3526 --noupdate', odcInstallation: 'DC'
 
-
-                // Archive the report and publish it
+        // Archive the report and publish it
                 archiveArtifacts allowEmptyArchive: true, artifacts: '**/dependency-check-report.xml', followSymlinks: false
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+
             }
         }
 

@@ -17,20 +17,8 @@ spec:
         image: manojkrishnappa/jiohotstar:20250409
         imagePullPolicy: Always
         ports:
-        - containerPort: 8080
+        - containerPort: 3000
         # Adding health checks (customize the path and port as needed)
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 5
         resources:
           requests:
             memory: "256Mi"
@@ -49,5 +37,5 @@ spec:
   ports:
   - protocol: "TCP"
     port: 80
-    targetPort: 8080
+    targetPort: 3000
   type: LoadBalancer
