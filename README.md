@@ -1,7 +1,14 @@
 # Architecture for application
 # complete-cicd-project-microdegree
+
 ![img_10.png](img_10.png)
 
+## Complete architecture
+![img_14.png](img_14.png)
+
+![img_11.png](img_11.png)
+![img_12.png](img_12.png)
+![img_13.png](img_13.png)
 
 
 
